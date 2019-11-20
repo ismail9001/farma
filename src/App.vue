@@ -1,8 +1,16 @@
 <template>
-    <v-content>
-      <Header/>
+    <div id="app">
+    <v-app>
+        <v-content>
+        <Header/>
+        <v-container fluid>
+            <router-view>
+            </router-view>
+        </v-container>
       <Footer/>
-    </v-content>
+        </v-content>
+    </v-app>
+    </div>
 </template>
 
 <script>
