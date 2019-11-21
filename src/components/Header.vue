@@ -1,6 +1,10 @@
 <template>
     <div>
-        <v-toolbar>
+        <v-toolbar
+            color="primary"
+            dark
+            flat
+        >
             <v-toolbar-title>    <router-link
                 class="home"
                 tag="span"

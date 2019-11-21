@@ -7,6 +7,7 @@
             <router-view>
             </router-view>
         </v-container>
+            <Message/>
       <Footer/>
         </v-content>
     </v-app>
@@ -15,6 +16,7 @@
 
 <script>
 import Header from './components/Header'
+import Message from './components/Message'
 import Footer from './components/Footer'
 
 export default {
@@ -22,6 +24,7 @@ export default {
 
   components: {
     Header,
+    Message,
     Footer
   },
 
