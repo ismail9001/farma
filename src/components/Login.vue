@@ -1,6 +1,5 @@
 <template>
-  <v-app id="inspire">
-    <v-content>
+    <v-layout fill-height="">
       <v-container
         class="fill-height"
         fluid
@@ -41,6 +40,8 @@
                   />
                 </v-form>
               </v-card-text>
+                <div class="danger-alert" v-html="error" />
+                <br>
               <v-card-actions>
                 <v-spacer />
                   <router-link
@@ -48,21 +49,49 @@
                   class="mr-4 link"
               >
                   Забыли пароль?</router-link>
-                <v-btn color="primary">Войти</v-btn>
+                <v-btn color="primary"
+                       @click="login">
+                    Войти</v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
         </v-row>
       </v-container>
-    </v-content>
-  </v-app>
+    </v-layout>
 </template>
 
 <script>
+import AuthenticationService from '../service/AuthenticationService'
+
 export default {
   name: 'Login',
   props: {
     source: String
+  },
+  data () {
+    return {
+      email: '',
+      password: '',
+      error: null
+    }
+  },
+  methods: {
+    async login () {
+      try {
+        const response = await AuthenticationService.login({
+          grant_type: 'password', // TODO: сделать боевой метод
+          email: 'admin@gmail.com', // this.email,
+          password: '12345'// this.password
+        })
+        this.$store.dispatch('setToken', response.data.token)
+        this.$store.dispatch('setUser', response.data.user)
+        this.$router.push({
+          name: 'cows'
+        })
+      } catch (error) {
+        this.error = error // .response.data.error
+      }
+    }
   }
 }
 </script>

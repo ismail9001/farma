@@ -8,7 +8,7 @@
             </router-view>
         </v-container>
             <Message/>
-      <Footer/>
+        <Footer/>
         </v-content>
     </v-app>
     </div>
