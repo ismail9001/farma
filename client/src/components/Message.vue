@@ -17,7 +17,6 @@ export default {
   watch: {
     catch (error) {
       this.error = error
-      console.log(error)// .response.data.error
     }
   }
 }

@@ -1,11 +1,11 @@
-import Api from '../service/Api'
+import Api from './Api'
 
 export default {
   register: function (credentials) {
     return Api().post('register', credentials)
   },
   login: function (credentials) {
-    return Api().post('account', credentials)
+    return Api().post('login', credentials)
   }
 }
 
