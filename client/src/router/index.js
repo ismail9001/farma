@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 import Login from '../components/Login.vue'
 import Registration from '../components/Registration.vue'
 import HelloWorld from '../components/HelloWorld'
+import Charts from '../components/Сharts.vue'
+import Table from '../components/Table.vue'
 
 Vue.use(VueRouter)
 
@@ -21,6 +23,16 @@ const routes = [
     path: '/registration',
     name: 'registration',
     component: Registration
+  },
+  {
+    path: '/charts',
+    name: 'charts',
+    component: Charts
+  },
+  {
+    path: '/table',
+    name: 'table',
+    component: Table
   },
   {
     path: '/about',

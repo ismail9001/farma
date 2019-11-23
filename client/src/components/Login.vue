@@ -1,33 +1,29 @@
 <template>
     <v-layout fill-height="">
-      <v-container
-        class="fill-height"
-        fluid
-      >
-        <v-row
-          align="center"
-          justify="center"
-        >
-          <v-col
-            cols="12"
-            sm="8"
-            md="4"
-          >
-              <v-card class="elevation-12">
-                <v-toolbar
-                color="primary"
-                dark
-                flat
-              >
-                  <v-toolbar-title>Вход в систему</v-toolbar-title>
-                  <v-spacer />
-              </v-toolbar>
-              <v-card-text>
-                  <v-form>
-                      <v-text-field
-                      label="Имя пользователя"
-                      name="email"
-                      prepend-icon="person"
+        <v-container
+            class="fill-height"
+            fluid>
+            <v-row
+                align="center"
+                justify="center">
+                <v-col
+                    cols="12"
+                    sm="8"
+                    md="4">
+                    <v-card class="elevation-12">
+                        <v-toolbar
+                            color="primary"
+                            dark
+                            flat>
+                            <v-toolbar-title>Вход в систему</v-toolbar-title>
+                            <v-spacer />
+                        </v-toolbar>
+                        <v-card-text>
+                            <v-form>
+                                <v-text-field
+                                    label="Имя пользователя"
+                                    name="email"
+                                    prepend-icon="person"
                       type="text"
                       v-model="email"
                       :error-messages="emailError"

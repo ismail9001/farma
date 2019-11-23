@@ -3,36 +3,45 @@
         <v-toolbar
             color="primary"
             dark
-            flat
-        >
-            <v-toolbar-title>    <router-link
+            flat>
+            <v-toolbar-title>
+                <router-link
                 class="home"
                 tag="span"
-                :to="{
-     name:'helloworld'
-     }">
+                :to="{name:'helloworld'}">
                 Farmer
-            </router-link></v-toolbar-title>
+                </router-link>
+            </v-toolbar-title>
             <v-spacer></v-spacer>
-
             <v-toolbar-items>
-                <v-btn text
-                       :to="{name:'login'}"
-                >
+                <v-btn
+                    text
+                    :to="{name:'table'}">
+                    Ввод данных
+                </v-btn>
+                <v-btn
+                    text
+                    :to="{name:'charts'}">
+                    Надои
+                </v-btn>
+                <v-btn
+                    text
+                    :to="{name:'login'}">
                     Войти
                 </v-btn>
-                <v-btn text
-                       :to="{name:'registration'}"
-                >
-                    Регистрация</v-btn>
+                <v-btn
+                    text
+                    :to="{name:'registration'}">
+                    Регистрация
+                </v-btn>
             </v-toolbar-items>
 
-            <template v-if="$vuetify.breakpoint.smAndUp">
+            <!--<template v-if="$vuetify.breakpoint.smAndUp">
                 <v-btn icon
                        :to="{name:'login'}">
                     <v-icon>mdi-export-variant</v-icon>
                 </v-btn>
-            </template>
+            </template>-->
         </v-toolbar>
     </div>
 <!-- <v-toolbar-items v-if="$store.state.isUserLoggedIn">
