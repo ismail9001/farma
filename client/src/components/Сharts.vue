@@ -12,7 +12,7 @@
                     md="4">
                     <v-card class="elevatio-12">
                         <div>
-                            <apexchart type="line" :options="options" :series="series"></apexchart>
+                            <apexchart type=area height=600 :options="chartOptions" :series="series"></apexchart>
                         </div>
                     </v-card>
                 </v-col>
@@ -28,22 +28,44 @@
 
 <script>
 
+import MilkService from '../services/MilkService'
+
 export default {
   name: 'charts',
   data () {
     return {
-      options: {
-        chart: {
-          id: 'vuechart-example'
+      series: [{
+        name: 'series1',
+        data: []
+      }],
+      chartOptions: {
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          curve: 'smooth'
         },
         xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
+          type: 'datetime',
+          categories: []
+        },
+        tooltip: {
+          x: {
+            format: 'dd/MM/yy HH:mm'
+          }
         }
-      },
-      series: [{
-        name: 'series-1',
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
-      }]
+      }
+    }
+  },
+  async beforeMount () {
+    this.temp = (await MilkService.get()).data
+    let index, len
+    for (index = 0, len = this.temp.length; index < len; ++index) {
+      this.series[0].data.push(this.temp[index].weight)
+      let date = new Date(Date.parse(this.temp[index].date))
+      date = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2) +
+          'T' + ('0' + (date.getHours())).slice(-2) + ':' + ('0' + (date.getMinutes())).slice(-2) + ':' + ('0' + (date.getSeconds())).slice(-2) // TODO: вынести в метод
+      this.chartOptions.xaxis.categories.push(date)
     }
   }
 }

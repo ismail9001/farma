@@ -3,6 +3,7 @@ const AuthenticationControllerPolicy = require('./policies/AuthenticationControl
 const SongsController = require('./controllers/SongsController')
 const BookmarksController = require('./controllers/BookmarksController')
 const HistoriesController = require('./controllers/HistoriesController')
+const MilkController = require('./controllers/MilkController')
 const isAuthenticated = require('./policies/isAuthenticated')
 
 module.exports = (app) => {
@@ -34,4 +35,12 @@ module.exports = (app) => {
 	app.post('/histories',
 		isAuthenticated,
 		HistoriesController.post)
+	app.get('/milk',
+		MilkController.get)
+	app.post('/milk',
+		MilkController.post)
+	app.delete('/milk/:milkId',
+		MilkController.delete)
+	app.put('/milk/:milkId',
+		MilkController.put)
 }
