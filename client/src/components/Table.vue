@@ -72,7 +72,6 @@ export default {
       {
         text: 'Дата',
         align: 'left',
-        sortable: false,
         value: 'date'
       },
       { text: 'Вес', value: 'weight' },
@@ -124,7 +123,6 @@ export default {
       confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
       try {
         await MilkService.delete(item.id)
-        // this.desserts = (await MilkService.get()).data
       } catch (error) {
         this.error = error.response.data.error
       }
@@ -138,7 +136,6 @@ export default {
     },
     async save () {
       if (this.editedIndex > -1) {
-        console.log('9999')
         // this.desserts.push(this.editedItem)
         try {
           await MilkService.put({
@@ -146,8 +143,6 @@ export default {
             date: this.editedItem.date,
             weight: this.editedItem.weight
           })
-
-          // this.desserts = (await MilkService.get()).data
         } catch (error) {
           this.error = error.response.data.error
         }

@@ -7,9 +7,9 @@
                 align="center"
                 justify="center">
                 <v-col
-                    cols="6"
-                    sm="6"
-                    md="4">
+                    cols="12"
+                    sm="12"
+                    md="12">
                     <v-card class="elevatio-12">
                         <div>
                             <apexchart type=area height=600 :options="chartOptions" :series="series"></apexchart>
@@ -51,7 +51,7 @@ export default {
         },
         tooltip: {
           x: {
-            format: 'dd/MM/yy HH:mm'
+            format: 'dd-MM-yy'
           }
         }
       }
@@ -64,7 +64,7 @@ export default {
       this.series[0].data.push(this.temp[index].weight)
       let date = new Date(Date.parse(this.temp[index].date))
       date = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2) +
-          'T' + ('0' + (date.getHours())).slice(-2) + ':' + ('0' + (date.getMinutes())).slice(-2) + ':' + ('0' + (date.getSeconds())).slice(-2) // TODO: вынести в метод
+          'T' + ('0' + (date.getHours())).slice(-2) + ':' + ('0' + (date.getMinutes())).slice(-2) + ':' + ('0' + (date.getSeconds())).slice(-2) // TODO: вынести в метод когда понадобиться(сейчас решается на уровне типа столбца)
       this.chartOptions.xaxis.categories.push(date)
     }
   }

@@ -1,33 +1,48 @@
-const fs = require('fs')
 const path = require('path')
 const Sequelize = require('sequelize')
-const config = require('../config/config')
+const config = require('../../config/config')
 const db = {}
 
 const sequelize = new Sequelize(
-	config.db.database,
-	config.db.user,
-	config.db.password,
-	config.db.options
+	config.development.database,
+	config.development.username,
+	config.development.password,
+	{
+		dialect: config.development.dialect,
+		host: config.development.host
+	}
 )
 
-fs
-	.readdirSync(__dirname)
-	.filter((file) =>
-		file !== 'index.js'
-	)
-	.forEach((file) => {
-		const model = sequelize.import(path.join(__dirname, file))
-		db[model.name] = model
-	})
+const klaw = require('klaw')
+const through2 = require('through2')
 
-Object.keys(db).forEach(function (modelName) {
-	if ('associate' in db[modelName]) {
-		db[modelName].associate(db)
-	}
+const excludeDirFilter = through2.obj(function (item, enc, next) {
+	if (!item.stats.isDirectory()) this.push(item)
+	next()
 })
 
-db.sequelize = sequelize
-db.Sequelize = Sequelize
+async function fn () {
+	await klaw(__dirname)
+		.pipe(excludeDirFilter)
+		.on('data', item => {
+			if (path.basename(item.path) !== 'index.js') {
+				const model = sequelize.import(item.path)
+				db[model.name] = model
+			}
+		})
+		.on('end', () => {
+			console.log(db)
+		})
 
-module.exports = db
+	await Object.keys(db).forEach(function (modelName) {
+		if ('associate' in db[modelName]) {
+			db[modelName].associate(db)
+			console.log(2)
+		}
+	})
+}
+
+// Вызов fn
+module.exports = fn().then(() => db).catch((error) => {
+	console.log(error)
+})
