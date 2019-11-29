@@ -1,48 +1,52 @@
+const fs = require('fs')
 const path = require('path')
 const Sequelize = require('sequelize')
-const config = require('../../config/config')
+const config = require('../config/config')
 const db = {}
 
 const sequelize = new Sequelize(
-	config.development.database,
-	config.development.username,
-	config.development.password,
-	{
-		dialect: config.development.dialect,
-		host: config.development.host
-	}
+	config.db.database,
+	config.db.user,
+	config.db.password,
+	config.db.options
 )
 
-const klaw = require('klaw')
-const through2 = require('through2')
+var searchRecursive = function (dir, pattern) {
+	// This is where we store pattern matches of all files inside the directory
+	var results = []
 
-const excludeDirFilter = through2.obj(function (item, enc, next) {
-	if (!item.stats.isDirectory()) this.push(item)
-	next()
-})
+	// Read contents of directory
+	fs.readdirSync(dir).forEach(function (dirInner) {
+		// Obtain absolute path
+		dirInner = path.resolve(dir, dirInner)
 
-async function fn () {
-	await klaw(__dirname)
-		.pipe(excludeDirFilter)
-		.on('data', item => {
-			if (path.basename(item.path) !== 'index.js') {
-				const model = sequelize.import(item.path)
-				db[model.name] = model
-			}
-		})
-		.on('end', () => {
-			console.log(db)
-		})
+		// Get stats to determine if path is a directory or a file
+		var stat = fs.statSync(dirInner)
 
-	await Object.keys(db).forEach(function (modelName) {
-		if ('associate' in db[modelName]) {
-			db[modelName].associate(db)
-			console.log(2)
+		// If path is a directory, scan it and combine results
+		if (stat.isDirectory()) {
+			results = results.concat(searchRecursive(dirInner, pattern))
+		}
+
+		// If path is a file and ends with pattern then push it onto results
+		if (stat.isFile() && !dirInner.endsWith(pattern)) {
+			const model = sequelize.import(dirInner)
+			db[model.name] = model
 		}
 	})
+
+	return results
 }
 
-// Вызов fn
-module.exports = fn().then(() => db).catch((error) => {
-	console.log(error)
+searchRecursive(__dirname, 'index.js')
+
+Object.keys(db).forEach(function (modelName) {
+	if ('associate' in db[modelName]) {
+		db[modelName].associate(db)
+	}
 })
+
+db.sequelize = sequelize
+db.Sequelize = Sequelize
+
+module.exports = db

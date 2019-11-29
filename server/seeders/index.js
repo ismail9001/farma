@@ -1,10 +1,4 @@
-const {
-	sequelize
-} = require('../src/models/index')
-
-const {
-	Feed
-} = require('../src/models/Feed.js')
+const {	sequelize, Feed } = require('../src/models/')
 
 const Promise = require('bluebird')
 const feeds = require('./feeds.json')
