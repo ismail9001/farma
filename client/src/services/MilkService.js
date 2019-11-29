@@ -8,7 +8,6 @@ export default {
     return Api().post('milk', milk)
   },
   put (milk) {
-    console.log(milk)
     return Api().put(`milk/${milk.id}`, milk)
   },
   delete (milkId) {

@@ -5,6 +5,7 @@ import Registration from '../components/Registration.vue'
 import HelloWorld from '../components/HelloWorld'
 import Charts from '../components/Сharts.vue'
 import Table from '../components/Table.vue'
+import Feeds from '../components/Feeds.vue'
 
 Vue.use(VueRouter)
 
@@ -33,6 +34,11 @@ const routes = [
     path: '/table',
     name: 'table',
     component: Table
+  },
+  {
+    path: '/feeds',
+    name: 'feeds',
+    component: Feeds
   },
   {
     path: '/about',

@@ -68,6 +68,15 @@
                         <v-list-item-title>Надои</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
+
+                <v-list-item link :to="{name:'feeds'}">
+                    <v-list-item-action>
+                        <v-icon>mdi-contact-mail</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                        <v-list-item-title>Справочник</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
             </v-list>
         </v-navigation-drawer>
 

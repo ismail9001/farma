@@ -1,12 +1,12 @@
 <template>
     <v-data-table
         :headers="headers"
-        :items="desserts"
+        :items="feeds"
         class="elevation-1"
     >
         <template v-slot:top>
             <v-toolbar flat color="white">
-                <v-toolbar-title>My CRUD</v-toolbar-title>
+                <v-toolbar-title>Корма</v-toolbar-title>
                 <v-divider
                     class="mx-4"
                     inset
@@ -25,8 +25,7 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12">
-                                        <v-text-field v-model="editedItem.weight" @keypress="isNumber($event)"></v-text-field>
-                                        <v-date-picker v-model="editedItem.date"  color="green lighten-1" header-color="primary"></v-date-picker>
+                                        <v-text-field v-model="editedItem.title"></v-text-field>
                                     </v-col>
                                 </v-row>
                             </v-container>
@@ -59,32 +58,22 @@
 </template>
 
 <script>
-import MilkService from '../services/MilkService'
+import FeedService from '../services/FeedService'
 
 export default {
   data: () => ({
-    weight: 1234.34,
-    date: new Date().toISOString().substr(0, 10),
     dialog: false,
-    milks: null,
     headers: [
-      {
-        text: 'Дата',
-        align: 'left',
-        value: 'date'
-      },
-      { text: 'Вес', value: 'weight' },
+      { text: 'Название', value: 'title' },
       { text: '', value: 'action', sortable: false }
     ],
-    desserts: [],
+    feeds: [],
     editedIndex: -1,
     editedItem: {
-      weight: 0,
-      date: ''
+      title: ''
     },
     defaultItem: {
-      weight: 0,
-      date: ''
+      title: ''
     }
   }),
   computed: {
@@ -98,30 +87,19 @@ export default {
     }
   },
   async created () {
-    this.desserts = (await MilkService.get()).data
+    this.feeds = (await FeedService.get()).data
   },
   methods: {
-    isNumber: function (evt) {
-      evt = (evt) || window.event
-      var charCode = (evt.which) ? evt.which : evt.keyCode
-      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
-        evt.preventDefault()
-      } else {
-        return true
-      }
-    },
     editItem (item) {
-      this.editedIndex = this.desserts.indexOf(item)
+      this.editedIndex = this.feeds.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      this.editedItem.date = new Date(Date.parse(this.editedItem.date))
-      this.editedItem.date = this.editedItem.date.getFullYear() + '-' + ('0' + (this.editedItem.date.getMonth() + 1)).slice(-2) + '-' + ('0' + this.editedItem.date.getDate()).slice(-2) // TODO: вынести в метод
       this.dialog = true
     },
     async deleteItem (item) {
-      const index = this.desserts.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+      const index = this.feeds.indexOf(item)
+      confirm('Are you sure you want to delete this item?') && this.feeds.splice(index, 1)
       try {
-        await MilkService.delete(item.id)
+        await FeedService.delete(item.id)
       } catch (error) {
         this.error = error.response.data.error
       }
@@ -137,22 +115,20 @@ export default {
       if (this.editedIndex > -1) {
         // this.desserts.push(this.editedItem)
         try {
-          await MilkService.put({
+          await FeedService.put({
             id: this.editedItem.id,
-            date: this.editedItem.date,
-            weight: this.editedItem.weight
+            title: this.editedItem.title
           })
         } catch (error) {
           this.error = error.response.data.error
         }
-        Object.assign(this.desserts[this.editedIndex], this.editedItem)
+        Object.assign(this.feeds[this.editedIndex], this.editedItem)
       } else {
         try {
-          await MilkService.post({
-            date: this.editedItem.date,
-            weight: this.editedItem.weight
+          await FeedService.post({
+            title: this.editedItem.title
           })
-          this.desserts = (await MilkService.get()).data
+          this.feeds = (await FeedService.get()).data
         } catch (error) {
           this.error = error.response.data.error
         }
