@@ -4,6 +4,7 @@ const SongsController = require('./controllers/SongsController')
 const BookmarksController = require('./controllers/BookmarksController')
 const HistoriesController = require('./controllers/HistoriesController')
 const MilkController = require('./controllers/MilkController')
+const FeedController = require('./controllers/dictionary/FeedController')
 const isAuthenticated = require('./policies/isAuthenticated')
 
 module.exports = (app) => {
@@ -43,4 +44,12 @@ module.exports = (app) => {
 		MilkController.delete)
 	app.put('/milk/:milkId',
 		MilkController.put)
+	app.get('/feeds',
+		FeedController.get)
+	app.post('/feed',
+		FeedController.post)
+	app.delete('/feed/:feedId',
+		FeedController.delete)
+	app.put('/feed/:feedId',
+		FeedController.put)
 }
