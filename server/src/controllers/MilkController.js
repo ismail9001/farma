@@ -5,6 +5,7 @@ module.exports = {
 		try {
 			let milks = null
 			milks = await Milk.findAll({
+				order: [['date', 'DESC']]
 			})
 			res.send(milks)
 		} catch (err) {
@@ -18,7 +19,6 @@ module.exports = {
 		console.log('9999')
 		try {
 			const milk = await Milk.create(req.body)
-			console.log(req.params)
 			res.send(milk)
 		} catch (e) {
 			console.log(e)
