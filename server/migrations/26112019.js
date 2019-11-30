@@ -2,7 +2,7 @@
 module.exports = {
 	up: (queryInterface, Sequelize) => {
 		return queryInterface.changeColumn(
-			'milk',
+			'day',
 			'date',
 			{
 				type: Sequelize.DATEONLY,
@@ -13,7 +13,7 @@ module.exports = {
 
 	down: (queryInterface, Sequelize) => {
 		return queryInterface.changeColumn(
-			'milk',
+			'day',
 			'date',
 			{
 				type: Sequelize.DATE,

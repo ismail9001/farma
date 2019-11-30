@@ -59,14 +59,14 @@
 </template>
 
 <script>
-import MilkService from '../services/MilkService'
+import DayService from '../services/DayService'
 
 export default {
   data: () => ({
     weight: 1234.34,
     date: new Date().toISOString().substr(0, 10),
     dialog: false,
-    milks: null,
+    days: null,
     headers: [
       {
         text: 'Дата',
@@ -98,7 +98,7 @@ export default {
     }
   },
   async created () {
-    this.desserts = (await MilkService.get()).data
+    this.desserts = (await DayService.get()).data
   },
   methods: {
     isNumber: function (evt) {
@@ -121,7 +121,7 @@ export default {
       const index = this.desserts.indexOf(item)
       confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
       try {
-        await MilkService.delete(item.id)
+        await DayService.delete(item.uuid)
       } catch (error) {
         this.error = error.response.data.error
       }
@@ -137,8 +137,8 @@ export default {
       if (this.editedIndex > -1) {
         // this.desserts.push(this.editedItem)
         try {
-          await MilkService.put({
-            id: this.editedItem.id,
+          await DayService.put({
+            uuid: this.editedItem.uuid,
             date: this.editedItem.date,
             weight: this.editedItem.weight
           })
@@ -148,11 +148,11 @@ export default {
         Object.assign(this.desserts[this.editedIndex], this.editedItem)
       } else {
         try {
-          await MilkService.post({
+          await DayService.post({
             date: this.editedItem.date,
             weight: this.editedItem.weight
           })
-          this.desserts = (await MilkService.get()).data
+          this.desserts = (await DayService.get()).data
         } catch (error) {
           this.error = error.response.data.error
         }

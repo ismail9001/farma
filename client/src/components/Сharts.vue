@@ -28,7 +28,7 @@
 
 <script>
 
-import MilkService from '../services/MilkService'
+import DayService from '../services/DayService'
 
 export default {
   name: 'charts',
@@ -58,7 +58,7 @@ export default {
     }
   },
   async beforeMount () {
-    this.temp = (await MilkService.get()).data
+    this.temp = (await DayService.get()).data
     let index, len
     for (index = 0, len = this.temp.length; index < len; ++index) {
       this.series[0].data.push(this.temp[index].weight)

@@ -1,24 +1,24 @@
-const { Milk } = require('../models')
+const { Day } = require('../models')
 
 module.exports = {
 	async get (req, res) {
 		try {
-			let milks = null
-			milks = await Milk.findAll({
+			let days = null
+			days = await Day.findAll({
 				order: [['date', 'DESC']]
 			})
-			res.send(milks)
+			res.send(days)
 		} catch (err) {
 			console.log(err)
 			res.status(500).send({
-				error: 'an error has occured trying to fetch the milks'
+				error: 'an error has occured trying to fetch the days'
 			})
 		}
 	},
 	async post (req, res) {
 		try {
-			const milk = await Milk.create(req.body)
-			res.send(milk)
+			const day = await Day.create(req.body)
+			res.send(day)
 		} catch (e) {
 			console.log(e)
 			res.status(400).send({
@@ -28,15 +28,15 @@ module.exports = {
 	},
 	async delete (req, res) {
 		try {
-			const { milkId } = req.params
-			const milk = await Milk.findByPk(milkId)
-			if (!milk) {
+			const { dayId } = req.params
+			const day = await Day.findByPk(dayId)
+			if (!day) {
 				return res.status(403).send({
 					error: 'нет прав для удаления данной записи'
 				})
 			}
-			await milk.destroy()
-			res.send(milk)
+			await day.destroy()
+			res.send(day)
 		} catch (err) {
 			console.log(err)
 			res.status(500).send({
@@ -46,9 +46,9 @@ module.exports = {
 	},
 	async put (req, res) {
 		try {
-			await Milk.update(req.body, {
+			await Day.update(req.body, {
 				where: {
-					id: req.params.milkId
+					uuid: req.params.dayId
 				}
 			})
 			res.send(req.body)

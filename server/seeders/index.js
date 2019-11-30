@@ -1,12 +1,12 @@
 const {
 	sequelize,
 	Feed,
-	Milk
+	Day
 } = require('../src/models/')
 
 const Promise = require('bluebird')
 const feeds = require('./feeds.json')
-const milks = require('./milks.json')
+const days = require('./days.json')
 
 sequelize.sync({ force: true })
 	.then(async function () {
@@ -16,8 +16,8 @@ sequelize.sync({ force: true })
 			})
 		)
 		await Promise.all(
-			milks.map(milk => {
-				Milk.create(milk)
+			days.map(day => {
+				Day.create(day)
 			})
 		)
 	})

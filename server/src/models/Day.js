@@ -1,5 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
-	const Milk = sequelize.define('Milk', {
+	const Day = sequelize.define('Day', {
+		uuid: {
+			type: DataTypes.UUID,
+			defaultValue: DataTypes.UUIDV1,
+			primaryKey: true
+		},
 		weight: {
 			type: DataTypes.INTEGER,
 			allowNull: false
@@ -9,5 +14,5 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false
 		}
 	})
-	return Milk
+	return Day
 }
