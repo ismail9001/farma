@@ -5,6 +5,7 @@ const BookmarksController = require('./controllers/BookmarksController')
 const HistoriesController = require('./controllers/HistoriesController')
 const DayController = require('./controllers/DayController')
 const FeedController = require('./controllers/dictionary/FeedController')
+const PolygonController = require('./controllers/PolygonController')
 const isAuthenticated = require('./policies/isAuthenticated')
 
 module.exports = (app) => {
@@ -52,4 +53,12 @@ module.exports = (app) => {
 		FeedController.delete)
 	app.put('/feed/:feedId',
 		FeedController.put)
+	app.get('/polygons',
+		PolygonController.get)
+	app.post('/polygon',
+		PolygonController.post)
+	app.put('/polygon/:polygonUuid',
+		PolygonController.put)
+	app.delete('/polygon/:polygonUuid',
+		PolygonController.delete)
 }

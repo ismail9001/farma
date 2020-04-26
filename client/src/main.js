@@ -7,7 +7,6 @@ import vuetify from './plugins/vuetify'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import VueApexCharts from 'vue-apexcharts'
 
-Vue.config.productionTip = false
 Vue.component('apexchart', VueApexCharts)
 
 new Vue({

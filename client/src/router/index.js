@@ -6,6 +6,7 @@ import HelloWorld from '../components/HelloWorld'
 import Charts from '../components/Сharts.vue'
 import Table from '../components/Table.vue'
 import Feeds from '../components/Feeds.vue'
+import Map from '../components/Map.vue'
 
 Vue.use(VueRouter)
 
@@ -39,6 +40,11 @@ const routes = [
     path: '/feeds',
     name: 'feeds',
     component: Feeds
+  },
+  {
+    path: '/map',
+    name: 'map',
+    component: Map
   },
   {
     path: '/about',
