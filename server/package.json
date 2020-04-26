@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon src/app.js --exec  \"npm run lint && node\"",
+    "prod": "nodemon src/app.js",
     "lint": "eslint **/*.js",
     "seed": "nodemon seeders/index.js",
     "test": "mocha --timeout 10000",

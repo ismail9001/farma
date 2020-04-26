@@ -98,30 +98,20 @@ export default {
     geoCollection = new ymaps.GeoObjectCollection()
     for (let i = 0; i < this.polygons.length; i++) { // выведет 0, затем 1, затем 2
       // eslint-disable-next-line no-undef
-      var myGeoObject = new ymaps.GeoObject({
-        // Описываем геометрию геообъекта.
-        geometry: {
-          // Тип геометрии - "Многоугольник".
-          type: 'Polygon',
-          // Указываем координаты вершин многоугольника.
-          coordinates: this.polygons[i].marker.coordinates,
-          // Задаем правило заливки внутренних контуров по алгоритму "nonZero".
-          fillRule: 'nonZero'
-        },
-        properties: {
+      var myGeoObject = new ymaps.Polygon(
+        this.polygons[i].marker.coordinates, {
           uuid: this.polygons[i].uuid
-        }
-      },
-      {
+        },
+        {
         // Описываем опции геообъекта.
         // Цвет заливки.
-        fillColor: this.polygons[i].color,
-        // Ширина обводки.
-        strokeWidth: 1
-      },
-      {
-        uuid: this.polygons[i].uuid
-      })
+          fillColor: this.polygons[i].color,
+          // Ширина обводки.
+          strokeWidth: 1
+        },
+        {
+          uuid: this.polygons[i].uuid
+        })
       geoCollection.add(myGeoObject)
       myGeoObject.events.add(['click'], function (e) {
         geoCollection.each(function (e) {
@@ -138,7 +128,7 @@ export default {
     }
     /*    map.events.add(['click']), function () {
 
-            } */
+                    } */
     map.geoObjects.add(geoCollection)
     map.setBounds(geoCollection.getBounds())
     // здесь доступна переменная ymaps
