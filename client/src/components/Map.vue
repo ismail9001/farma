@@ -82,10 +82,8 @@ export default {
     polygons: [],
     fillColor: '#00FF0088'
   }),
-  async beforeCreate () {
-    this.polygons = (await PolygonService.get()).data
-  },
   async mounted () {
+    this.polygons = (await PolygonService.get()).data
     await loadYmap({ debug: true })
     // eslint-disable-next-line no-undef
     map = new ymaps.Map('map', {
