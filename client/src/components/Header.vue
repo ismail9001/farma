@@ -43,7 +43,37 @@
                 </v-btn>
             </template>
         </v-toolbar>-->
+        <v-app-bar
+            app
+            color="primary"
+            dark
+            flat
+        >
+            <v-toolbar-title>
+                <router-link
+                    class="home"
+                    tag="span"
+                    :to="{name:'map'}">
+                    Farmer
+                </router-link>
+            </v-toolbar-title>
+            <v-spacer></v-spacer>
+<!--            <v-toolbar-items>
+                <v-btn
+                    text
+                    :to="{name:'login'}">
+                    Войти
+                </v-btn>
+                <v-btn
+                    text
+                    :to="{name:'registration'}">
+                    Регистрация
+                </v-btn>
+            </v-toolbar-items>-->
 
+            <!--<v-app-bar-nav-icon @click.stop="drawer = !drawer" />-->
+        </v-app-bar>
+        <!--
         <v-navigation-drawer
             v-model="drawer"
             app
@@ -87,38 +117,7 @@
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
-        </v-navigation-drawer>
-
-        <v-app-bar
-            app
-            color="primary"
-            dark
-            flat
-        >
-            <v-toolbar-title>
-                <router-link
-                    class="home"
-                    tag="span"
-                    :to="{name:'helloworld'}">
-                    Farmer
-                </router-link>
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-toolbar-items>
-                <v-btn
-                    text
-                    :to="{name:'login'}">
-                    Войти
-                </v-btn>
-                <v-btn
-                    text
-                    :to="{name:'registration'}">
-                    Регистрация
-                </v-btn>
-            </v-toolbar-items>
-
-            <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-        </v-app-bar>
+        </v-navigation-drawer>-->
     </div>
 <!-- <v-toolbar-items v-if="$store.state.isUserLoggedIn">
       <v-btn flat dark
@@ -131,22 +130,22 @@
 
 <script>
 export default {
-  name: 'Header',
-  data: () => ({
-    drawer: false
-  }),
-  methods: {
-    navigateTo (route) {
-      this.$router.push(route)
-    },
-    logout () {
-      this.$store.dispatch('setToken', null)
-      this.$store.dispatch('setUser', null)
-      this.$router.push({
-        name: 'songs'
-      })
+    name: 'Header',
+    data: () => ({
+        drawer: false
+    }),
+    methods: {
+        navigateTo (route) {
+            this.$router.push(route)
+        },
+        logout () {
+            this.$store.dispatch('setToken', null)
+            this.$store.dispatch('setUser', null)
+            this.$router.push({
+                name: 'songs'
+            })
+        }
     }
-  }
 }
 </script>
 

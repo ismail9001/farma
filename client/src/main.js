@@ -10,8 +10,8 @@ import VueApexCharts from 'vue-apexcharts'
 Vue.component('apexchart', VueApexCharts)
 
 new Vue({
-  router,
-  store,
-  vuetify,
-  render: h => h(App)
+    router,
+    store,
+    vuetify,
+    render: h => h(App)
 }).$mount('#app')

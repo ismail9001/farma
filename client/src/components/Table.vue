@@ -62,103 +62,103 @@
 import DayService from '../services/DayService'
 
 export default {
-  data: () => ({
-    weight: 1234.34,
-    date: new Date().toISOString().substr(0, 10),
-    dialog: false,
-    days: null,
-    headers: [
-      {
-        text: 'Дата',
-        align: 'left',
-        value: 'date'
-      },
-      { text: 'Вес', value: 'weight' },
-      { text: '', value: 'action', sortable: false }
-    ],
-    desserts: [],
-    editedIndex: -1,
-    editedItem: {
-      weight: 0,
-      date: ''
-    },
-    defaultItem: {
-      weight: 0,
-      date: ''
-    }
-  }),
-  computed: {
-    formTitle () { // определение название всплывющего окна
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-    }
-  },
-  watch: {
-    dialog (val) {
-      val || this.close()
-    }
-  },
-  async created () {
-    this.desserts = (await DayService.get()).data
-  },
-  methods: {
-    isNumber: function (evt) {
-      evt = (evt) || window.event
-      var charCode = (evt.which) ? evt.which : evt.keyCode
-      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
-        evt.preventDefault()
-      } else {
-        return true
-      }
-    },
-    editItem (item) {
-      this.editedIndex = this.desserts.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.editedItem.date = new Date(Date.parse(this.editedItem.date))
-      this.editedItem.date = this.editedItem.date.getFullYear() + '-' + ('0' + (this.editedItem.date.getMonth() + 1)).slice(-2) + '-' + ('0' + this.editedItem.date.getDate()).slice(-2) // TODO: вынести в метод
-      this.dialog = true
-    },
-    async deleteItem (item) {
-      const index = this.desserts.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
-      try {
-        await DayService.delete(item.uuid)
-      } catch (error) {
-        this.error = error.response.data.error
-      }
-    },
-    close () {
-      this.dialog = false
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 300)
-    },
-    async save () {
-      if (this.editedIndex > -1) {
-        // this.desserts.push(this.editedItem)
-        try {
-          await DayService.put({
-            uuid: this.editedItem.uuid,
-            date: this.editedItem.date,
-            weight: this.editedItem.weight
-          })
-        } catch (error) {
-          this.error = error.response.data.error
+    data: () => ({
+        weight: 1234.34,
+        date: new Date().toISOString().substr(0, 10),
+        dialog: false,
+        days: null,
+        headers: [
+            {
+                text: 'Дата',
+                align: 'left',
+                value: 'date'
+            },
+            { text: 'Вес', value: 'weight' },
+            { text: '', value: 'action', sortable: false }
+        ],
+        desserts: [],
+        editedIndex: -1,
+        editedItem: {
+            weight: 0,
+            date: ''
+        },
+        defaultItem: {
+            weight: 0,
+            date: ''
         }
-        Object.assign(this.desserts[this.editedIndex], this.editedItem)
-      } else {
-        try {
-          await DayService.post({
-            date: this.editedItem.date,
-            weight: this.editedItem.weight
-          })
-          this.desserts = (await DayService.get()).data
-        } catch (error) {
-          this.error = error.response.data.error
+    }),
+    computed: {
+        formTitle () { // определение название всплывющего окна
+            return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
         }
-      }
-      this.close()
+    },
+    watch: {
+        dialog (val) {
+            val || this.close()
+        }
+    },
+    async created () {
+        this.desserts = (await DayService.get()).data
+    },
+    methods: {
+        isNumber: function (evt) {
+            evt = (evt) || window.event
+            var charCode = (evt.which) ? evt.which : evt.keyCode
+            if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+                evt.preventDefault()
+            } else {
+                return true
+            }
+        },
+        editItem (item) {
+            this.editedIndex = this.desserts.indexOf(item)
+            this.editedItem = Object.assign({}, item)
+            this.editedItem.date = new Date(Date.parse(this.editedItem.date))
+            this.editedItem.date = this.editedItem.date.getFullYear() + '-' + ('0' + (this.editedItem.date.getMonth() + 1)).slice(-2) + '-' + ('0' + this.editedItem.date.getDate()).slice(-2) // TODO: вынести в метод
+            this.dialog = true
+        },
+        async deleteItem (item) {
+            const index = this.desserts.indexOf(item)
+            confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+            try {
+                await DayService.delete(item.uuid)
+            } catch (error) {
+                this.error = error.response.data.error
+            }
+        },
+        close () {
+            this.dialog = false
+            setTimeout(() => {
+                this.editedItem = Object.assign({}, this.defaultItem)
+                this.editedIndex = -1
+            }, 300)
+        },
+        async save () {
+            if (this.editedIndex > -1) {
+                // this.desserts.push(this.editedItem)
+                try {
+                    await DayService.put({
+                        uuid: this.editedItem.uuid,
+                        date: this.editedItem.date,
+                        weight: this.editedItem.weight
+                    })
+                } catch (error) {
+                    this.error = error.response.data.error
+                }
+                Object.assign(this.desserts[this.editedIndex], this.editedItem)
+            } else {
+                try {
+                    await DayService.post({
+                        date: this.editedItem.date,
+                        weight: this.editedItem.weight
+                    })
+                    this.desserts = (await DayService.get()).data
+                } catch (error) {
+                    this.error = error.response.data.error
+                }
+            }
+            this.close()
+        }
     }
-  }
 }
 </script>
