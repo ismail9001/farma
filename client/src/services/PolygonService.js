@@ -8,7 +8,6 @@ export default {
         return Api().post('polygon', polygon)
     },
     put (polygon) {
-        console.log('hjhjh')
         return Api().put(`polygon/${polygon.uuid}`, polygon)
     },
     delete (polygonUuid) {

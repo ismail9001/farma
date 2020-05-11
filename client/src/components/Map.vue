@@ -117,7 +117,7 @@ export default {
                 floatIndex: 100
             })
         },
-        fill (geoCollection) {
+        fill (geoCollection) { // из массива объектов  бд получаем коллекцию геообъектов
             for (let i = 0; i < this.polygons.length; i++) {
             // eslint-disable-next-line no-undef
                 var geoObject = new ymaps.Polygon(
@@ -140,6 +140,7 @@ export default {
                 geoObject.editor.events.add(['drawingstop'], () => {
                     polygon.editor.stopDrawing()
                     polygon.editor.stopEditing()
+                    polygon.options.set({ fillColor: this.fillColor })
                     this.save(polygon)
                     this.delBtnDisable = true
                 })
@@ -166,10 +167,11 @@ export default {
                 this.fillColor = polygon.options.get('fillColor')
                 polygon.editor.startEditing()
             })
-            geoObject.editor.events.add(['drawingstop'], (e) => {
-                polygon = e.get('target')
-                polygon.stopDrawing()
-                polygon.stopEditing()
+            geoObject.editor.events.add(['drawingstop'], () => {
+                polygon.editor.stopDrawing()
+                polygon.editor.stopEditing()
+                polygon.options.set({ fillColor: this.fillColor })
+                this.save(polygon)
                 this.delBtnDisable = true
             })
             geoCollection.add(geoObject)
@@ -198,6 +200,8 @@ export default {
             this.delBtnDisable = true
         }
         // TODO: много повторяющегося кода
+        // TODO: сохранение и отображение кадастрового номера
+        // TODO: динамическое изменение цвета полигонов
     }
 }
 </script>
