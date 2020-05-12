@@ -1,18 +1,14 @@
 <template>
-    <v-container
-        :fluid=true
-        class="cont"
-    >
+    <v-container :fluid=true
+                 class="cont">
         <v-row no-gutters>
-            <v-col
-                cols="10"
-            >
+            <v-col cols="10">
                 <yandex-map :coords=coords
                             :zoom=zoom
                             :controls=controls
                             :map-type=mapType
                             style="width: 100%; height: 812px;"
-                @map-was-initialized="initHandler">
+                            @map-was-initialized="initHandler">
                 </yandex-map>
             </v-col>
             <v-col
@@ -20,20 +16,17 @@
                 <div class="ml-3">
                     <strong>Форма создания многоугольников</strong><br />
                     <br />Цвет заливки<br />
-                    <v-color-picker
-                        width = "100%"
-                        mode="hexa"
-                        hide-mode-switch
-                        hide-canvas
-                        v-model="fillColor">
+                    <v-color-picker width = "100%"
+                                    mode="hexa"
+                                    hide-mode-switch
+                                    hide-canvas
+                                    v-model="fillColor">
                     </v-color-picker>
-                    <v-btn
-                        block
-                        class="mt-3"
-                        @click="deletePolygon"
-                        id="deleteBtn"
-                        :disabled="delBtnDisable"
-                    >
+                    <v-btn block
+                           class="mt-3"
+                           @click="deletePolygon"
+                           id="deleteBtn"
+                           :disabled="delBtnDisable">
                         Удалить
                     </v-btn>
                 </div>
@@ -46,8 +39,8 @@
 import { yandexMap } from 'vue-yandex-maps'
 import PolygonService from '../services/PolygonService'
 
-var polygon
-var geoCollection
+let polygon
+let geoCollection
 
 export default {
     data: () => ({
@@ -75,7 +68,8 @@ export default {
             })
             // eslint-disable-next-line no-undef
             geoCollection = new ymaps.GeoObjectCollection()
-            map.geoObjects.add(this.fill(geoCollection))
+            this.fill()
+            map.geoObjects.add(geoCollection)
             map.setBounds(geoCollection.getBounds())
             btn.events.add(['select'], () => {
                 geoCollection.each(function (e) {
@@ -91,16 +85,14 @@ export default {
                     polygon.editor.stopDrawing()
                     polygon.editor.stopEditing()
                     const coords = polygon.geometry.getCoordinates()
-                    const marker = {
-                        type: 'Polygon',
-                        coordinates: coords
-                    }
                     try {
                         const newPolygon = (await PolygonService.post({
                             color: this.fillColor,
-                            marker: marker
+                            marker: {
+                                type: 'Polygon',
+                                coordinates: coords
+                            }
                         })).data
-                        // eslint-disable-next-line no-undef
                         this.polygons = (await PolygonService.get()).data
                         map.geoObjects.remove(polygon)
                         this.add(newPolygon)
@@ -117,40 +109,14 @@ export default {
                 floatIndex: 100
             })
         },
-        fill (geoCollection) { // из массива объектов  бд получаем коллекцию геообъектов
+        fill () { // из массива объектов  бд получаем коллекцию геообъектов
             for (let i = 0; i < this.polygons.length; i++) {
-            // eslint-disable-next-line no-undef
-                var geoObject = new ymaps.Polygon(
-                    this.polygons[i].marker.coordinates, {
-                        uuid: this.polygons[i].uuid
-                    },
-                    {
-                        fillColor: this.polygons[i].color,
-                        strokeWidth: 1
-                    })
-                geoObject.events.add(['click'], (e) => {
-                    this.delBtnDisable = false
-                    geoCollection.each(function (e) {
-                        e.editor.stopEditing()
-                    })
-                    polygon = e.get('target')
-                    this.fillColor = polygon.options.get('fillColor')
-                    polygon.editor.startEditing()
-                })
-                geoObject.editor.events.add(['drawingstop'], () => {
-                    polygon.editor.stopDrawing()
-                    polygon.editor.stopEditing()
-                    polygon.options.set({ fillColor: this.fillColor })
-                    this.save(polygon)
-                    this.delBtnDisable = true
-                })
-                geoCollection.add(geoObject)
+                this.add(this.polygons[i])
             }
-            return geoCollection
         },
         add (newPolygon) {
             // eslint-disable-next-line no-undef
-            var geoObject = new ymaps.Polygon(
+            let geoObject = new ymaps.Polygon(
                 newPolygon.marker.coordinates, {
                     uuid: newPolygon.uuid
                 },
@@ -159,24 +125,17 @@ export default {
                     strokeWidth: 1
                 })
             geoObject.events.add(['click'], (e) => {
-                this.delBtnDisable = false
-                geoCollection.each(function (e) {
-                    e.editor.stopEditing()
-                })
-                polygon = e.get('target')
-                this.fillColor = polygon.options.get('fillColor')
-                polygon.editor.startEditing()
+                this.polygonSelection(e)
             })
             geoObject.editor.events.add(['drawingstop'], () => {
-                polygon.editor.stopDrawing()
-                polygon.editor.stopEditing()
-                polygon.options.set({ fillColor: this.fillColor })
-                this.save(polygon)
-                this.delBtnDisable = true
+                this.save()
             })
             geoCollection.add(geoObject)
         },
         async save () {
+            polygon.editor.stopDrawing()
+            polygon.editor.stopEditing()
+            polygon.options.set({ fillColor: this.fillColor })
             try {
                 await PolygonService.put({
                     uuid: polygon.properties.get('uuid'),
@@ -189,6 +148,7 @@ export default {
             } catch (error) {
                 this.error = error.response.data.error
             }
+            this.delBtnDisable = true
         },
         async deletePolygon () {
             try {
@@ -198,13 +158,22 @@ export default {
             }
             geoCollection.remove(polygon)
             this.delBtnDisable = true
+        },
+        polygonSelection (e) {
+            this.delBtnDisable = false
+            geoCollection.each(function (e) {
+                e.editor.stopEditing()
+            })
+            polygon = e.get('target')
+            this.fillColor = polygon.options.get('fillColor')
+            polygon.editor.startEditing()
         }
-        // TODO: много повторяющегося кода
         // TODO: сохранение и отображение кадастрового номера
         // TODO: динамическое изменение цвета полигонов
     }
 }
 </script>
+
 <style>
     .cont{
         padding:0px;
