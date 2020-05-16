@@ -88,6 +88,7 @@ export default {
                 geoCollection.each(function (e) {
                     e.editor.stopEditing()
                 })
+                this.cadastrNumber = null
                 // eslint-disable-next-line no-undef
                 polygon = new ymaps.Polygon([], {}, {
                     editorDrawingCursor: 'crosshair',
@@ -151,7 +152,7 @@ export default {
             polygon.editor.stopDrawing()
             polygon.editor.stopEditing()
             polygon.options.set({ fillColor: this.fillColor })
-            polygon.properties.set({ cadastrNumber: this.cadastrNumber })
+            polygon.properties.set({ hintContent: this.cadastrNumber })
             try {
                 await PolygonService.put({
                     uuid: polygon.properties.get('uuid'),
@@ -165,6 +166,7 @@ export default {
             } catch (error) {
                 this.error = error.response.data.error
             }
+            this.cadastrNumber = null
             this.controlDisable = true
         },
         async deletePolygon () {
@@ -174,6 +176,7 @@ export default {
                 this.error = error.response.data.error
             }
             geoCollection.remove(polygon)
+            this.cadastrNumber = null
             this.controlDisable = true
         },
         polygonSelection (e) {
@@ -184,6 +187,7 @@ export default {
             polygon = e.get('target')
             this.fillColor = polygon.options.get('fillColor')
             this.cadastrNumber = polygon.properties.get('hintContent')
+            console.log(this.cadastrNumber)
             polygon.editor.startEditing()
         }
         // TODO: динамическое изменение цвета полигонов
