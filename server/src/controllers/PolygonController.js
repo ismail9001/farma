@@ -30,7 +30,7 @@ module.exports = {
 			const polygon = await Polygon.findByPk(polygonUuid)
 			if (!polygon) {
 				return res.status(403).send({
-					error: 'нет прав для удаления данной записи'
+					error: 'Нет прав для удаления данной области'
 				})
 			}
 			await polygon.destroy()
@@ -38,7 +38,7 @@ module.exports = {
 		} catch (err) {
 			console.log(err)
 			res.status(500).send({
-				error: 'ошибка удаления записи'
+				error: 'ошибка удаления объекта'
 			})
 		}
 	},

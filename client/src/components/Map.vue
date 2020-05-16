@@ -15,7 +15,17 @@
                 cols="2">
                 <div class="ml-3">
                     <strong>Форма создания многоугольников</strong><br />
-                    <br />Цвет заливки<br />
+                        <v-text-field
+                            v-model="cadastrNumber"
+                            :disabled="controlDisable"
+                            class="mt-3"
+                            label="Solo"
+                            placeholder="Кадастровый номер"
+                            :dense=true
+                            hide-details="auto"
+                            solo>
+                        </v-text-field>
+                    <p class="mt-3 mb-3 text-left">Цвет заливки</p>
                     <v-color-picker width = "100%"
                                     mode="hexa"
                                     hide-mode-switch
@@ -26,7 +36,7 @@
                            class="mt-3"
                            @click="deletePolygon"
                            id="deleteBtn"
-                           :disabled="delBtnDisable">
+                           :disabled="controlDisable">
                         Удалить
                     </v-btn>
                 </div>
@@ -50,10 +60,13 @@ export default {
         mapType: 'hybrid',
         polygons: [],
         fillColor: '#00FF0088',
-        delBtnDisable: true
+        cadastrNumber: '',
+        controlDisable: true
     }),
     components: {
         yandexMap
+    },
+    created () {
     },
     async mounted () {
         this.polygons = (await PolygonService.get()).data
@@ -91,7 +104,8 @@ export default {
                             marker: {
                                 type: 'Polygon',
                                 coordinates: coords
-                            }
+                            },
+                            cadastrNumber: this.cadastrNumber
                         })).data
                         this.polygons = (await PolygonService.get()).data
                         map.geoObjects.remove(polygon)
@@ -118,7 +132,8 @@ export default {
             // eslint-disable-next-line no-undef
             let geoObject = new ymaps.Polygon(
                 newPolygon.marker.coordinates, {
-                    uuid: newPolygon.uuid
+                    uuid: newPolygon.uuid,
+                    hintContent: newPolygon.cadastrNumber
                 },
                 {
                     fillColor: newPolygon.color,
@@ -136,6 +151,7 @@ export default {
             polygon.editor.stopDrawing()
             polygon.editor.stopEditing()
             polygon.options.set({ fillColor: this.fillColor })
+            polygon.properties.set({ cadastrNumber: this.cadastrNumber })
             try {
                 await PolygonService.put({
                     uuid: polygon.properties.get('uuid'),
@@ -143,12 +159,13 @@ export default {
                         type: 'Polygon',
                         coordinates: polygon.geometry.getCoordinates()
                     },
-                    color: this.fillColor
+                    color: this.fillColor,
+                    cadastrNumber: this.cadastrNumber
                 })
             } catch (error) {
                 this.error = error.response.data.error
             }
-            this.delBtnDisable = true
+            this.controlDisable = true
         },
         async deletePolygon () {
             try {
@@ -157,18 +174,18 @@ export default {
                 this.error = error.response.data.error
             }
             geoCollection.remove(polygon)
-            this.delBtnDisable = true
+            this.controlDisable = true
         },
         polygonSelection (e) {
-            this.delBtnDisable = false
+            this.controlDisable = false
             geoCollection.each(function (e) {
                 e.editor.stopEditing()
             })
             polygon = e.get('target')
             this.fillColor = polygon.options.get('fillColor')
+            this.cadastrNumber = polygon.properties.get('hintContent')
             polygon.editor.startEditing()
         }
-        // TODO: сохранение и отображение кадастрового номера
         // TODO: динамическое изменение цвета полигонов
     }
 }

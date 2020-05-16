@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
 		color: {
 			type: DataTypes.STRING,
 			allowNull: false
+		},
+		cadastrNumber: {
+			type: DataTypes.STRING,
+			allowNull: true
 		}
 	})
 	return Polygon

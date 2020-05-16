@@ -3,10 +3,9 @@
     "username": "root",
     "password": "123456",
     "database": "tabtracker",
-    "host": "localhost",
+    "host": "127.0.0.1",
     "port": "8081",
-    "dialect": "postgres",
-    "operatorsAliases": false
+    "dialect": "postgres"
   },
   "test": {
     "username": "root",
@@ -14,8 +13,7 @@
     "database": "tabtracker",
     "host": "127.0.0.1",
     "port": "8081",
-    "dialect": "postgres",
-    "operatorsAliases": false
+    "dialect": "postgres"
   },
   "production": {
     "username": "root",
@@ -23,7 +21,6 @@
     "database": "tabtracker",
     "host": "127.0.0.1",
     "port": "8081",
-    "dialect": "postgres",
-    "operatorsAliases": false
+    "dialect": "postgres"
   }
 }
