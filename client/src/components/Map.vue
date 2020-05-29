@@ -92,7 +92,6 @@ export default {
                 const { RADIUS, toRad } = util
                 function calculatePolygonArea (polygon) {
                     let area = 0
-                    console.log(polygon.geometry)
                     const polyCoords = polygon.geometry.getCoordinates()
                     if (polyCoords.length === 0) {
                         return area
@@ -247,6 +246,7 @@ export default {
         // TODO: динамическое изменение цвета полигонов
         // TODO: сохранение площадей
         // TODO: общая площадь
+        // TODO: переделать конфиги
     }
 }
 </script>
