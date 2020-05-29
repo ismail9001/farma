@@ -42,11 +42,6 @@ const routes = [
         component: Feeds
     },
     {
-        path: '/map',
-        name: 'map',
-        component: Map
-    },
-    {
         path: '/about',
         name: 'about',
         // route level code-splitting

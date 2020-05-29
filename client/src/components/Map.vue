@@ -14,17 +14,24 @@
             <v-col
                 cols="2">
                 <div class="ml-3">
-                    <strong>Форма создания многоугольников</strong><br />
-                        <v-text-field
-                            v-model="cadastrNumber"
-                            :disabled="controlDisable"
-                            class="mt-3"
-                            label="Solo"
-                            placeholder="Кадастровый номер"
-                            :dense=true
-                            hide-details="auto"
-                            solo>
-                        </v-text-field>
+                    <div>
+                        <strong>Форма создания участков</strong>
+                    </div>
+                    <div class="mt-3">
+                        <p v-if="!controlDisable">Площадь участка {{ area }} Га</p>
+                        <p v-else>
+                            Выберите участок
+                        </p>
+                    </div>
+                    <v-text-field v-model="cadastrNumber"
+                                  :disabled="controlDisable"
+                                  class="mt-3"
+                                  label="Solo"
+                                  placeholder="Кадастровый номер"
+                                  :dense=true
+                                  hide-details="auto"
+                                  solo>
+                    </v-text-field>
                     <p class="mt-3 mb-3 text-left">Цвет заливки</p>
                     <v-color-picker width = "100%"
                                     mode="hexa"
@@ -61,18 +68,59 @@ export default {
         polygons: [],
         fillColor: '#00FF0088',
         cadastrNumber: '',
+        area: null,
         controlDisable: true
     }),
     components: {
         yandexMap
     },
-    created () {
-    },
-    async mounted () {
+    async created () {
         this.polygons = (await PolygonService.get()).data
     },
     methods: {
         initHandler (map) {
+            // eslint-disable-next-line no-undef
+            ymaps.modules.define('geo.utils', provide => {
+                provide({
+                    RADIUS: 6378137,
+                    toRad: deg => deg * Math.PI / 180
+                })
+            })
+
+            // eslint-disable-next-line no-undef
+            ymaps.modules.define('geo.polygonArea', ['geo.utils'], (provide, util) => {
+                const { RADIUS, toRad } = util
+                function calculatePolygonArea (polygon) {
+                    let area = 0
+                    console.log(polygon.geometry)
+                    const polyCoords = polygon.geometry.getCoordinates()
+                    if (polyCoords.length === 0) {
+                        return area
+                    }
+                    area = calculateArea(polyCoords[0])
+                    for (let i = 1; i < polyCoords.length - 1; i++) {
+                        area -= calculateArea(polyCoords[i])
+                    }
+
+                    return area
+                }
+                function calculateArea (coords) {
+                    let area = 0
+                    for (let i = 0; i < coords.length - 1; i++) {
+                        let p1 = coords[i]
+                        let p2 = coords[i + 1]
+                        area += toRad(p2[1] - p1[1]) * (2 + Math.sin(toRad(p1[0])) + Math.sin(toRad(p2[0])))
+                    }
+
+                    return Math.round(Math.abs(area * RADIUS * RADIUS / 2.0 / 10000) * 100) / 100
+                }
+
+                provide({ calculatePolygonArea })
+            })
+            // eslint-disable-next-line no-undef
+            ymaps.ready({
+                require: ['geo.polygonArea']
+            })
             // eslint-disable-next-line no-undef
             const btn = new ymaps.control.Button({
                 data: {
@@ -106,7 +154,9 @@ export default {
                                 type: 'Polygon',
                                 coordinates: coords
                             },
-                            cadastrNumber: this.cadastrNumber
+                            cadastrNumber: this.cadastrNumber,
+                            // eslint-disable-next-line no-undef
+                            area: ymaps.geo.polygonArea.calculatePolygonArea(polygon)
                         })).data
                         this.polygons = (await PolygonService.get()).data
                         map.geoObjects.remove(polygon)
@@ -153,6 +203,8 @@ export default {
             polygon.editor.stopEditing()
             polygon.options.set({ fillColor: this.fillColor })
             polygon.properties.set({ hintContent: this.cadastrNumber })
+            // eslint-disable-next-line no-undef
+            let area = ymaps.geo.polygonArea.calculatePolygonArea(polygon)
             try {
                 await PolygonService.put({
                     uuid: polygon.properties.get('uuid'),
@@ -161,7 +213,8 @@ export default {
                         coordinates: polygon.geometry.getCoordinates()
                     },
                     color: this.fillColor,
-                    cadastrNumber: this.cadastrNumber
+                    cadastrNumber: this.cadastrNumber,
+                    area: area
                 })
             } catch (error) {
                 this.error = error.response.data.error
@@ -186,11 +239,14 @@ export default {
             })
             polygon = e.get('target')
             this.fillColor = polygon.options.get('fillColor')
+            // eslint-disable-next-line no-undef
+            this.area = ymaps.geo.polygonArea.calculatePolygonArea(polygon)
             this.cadastrNumber = polygon.properties.get('hintContent')
-            console.log(this.cadastrNumber)
             polygon.editor.startEditing()
         }
         // TODO: динамическое изменение цвета полигонов
+        // TODO: сохранение площадей
+        // TODO: общая площадь
     }
 }
 </script>
