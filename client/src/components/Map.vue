@@ -69,7 +69,8 @@ export default {
         fillColor: '#00FF0088',
         cadastrNumber: '',
         area: null,
-        controlDisable: true
+        controlDisable: true,
+        allarea: null
     }),
     components: {
         yandexMap
@@ -179,11 +180,13 @@ export default {
             }
         },
         add (newPolygon) {
+            this.allarea += newPolygon.area
             // eslint-disable-next-line no-undef
             let geoObject = new ymaps.Polygon(
                 newPolygon.marker.coordinates, {
                     uuid: newPolygon.uuid,
-                    hintContent: newPolygon.cadastrNumber
+                    hintContent: newPolygon.cadastrNumber,
+                    area: newPolygon.area
                 },
                 {
                     fillColor: newPolygon.color,
@@ -204,6 +207,7 @@ export default {
             polygon.properties.set({ hintContent: this.cadastrNumber })
             // eslint-disable-next-line no-undef
             let area = ymaps.geo.polygonArea.calculatePolygonArea(polygon)
+            polygon.properties.set({ area: area })
             try {
                 await PolygonService.put({
                     uuid: polygon.properties.get('uuid'),
@@ -239,7 +243,7 @@ export default {
             polygon = e.get('target')
             this.fillColor = polygon.options.get('fillColor')
             // eslint-disable-next-line no-undef
-            this.area = ymaps.geo.polygonArea.calculatePolygonArea(polygon)
+            this.area = polygon.properties.get('area')
             this.cadastrNumber = polygon.properties.get('hintContent')
             polygon.editor.startEditing()
         }
