@@ -46,12 +46,6 @@
                            :disabled="controlDisable">
                         Удалить
                     </v-btn>
-                    <v-btn block
-                           class="mt-3"
-                           @click="updatePolygon"
-                           id="update">
-                        Обновить
-                    </v-btn>
                     <div class="mt-3">
                         <p>Общая площадь участков {{ allarea }} Га</p>
                     </div>
@@ -244,29 +238,6 @@ export default {
             geoCollection.remove(polygon)
             this.cadastrNumber = null
             this.controlDisable = true
-        },
-        updatePolygon () {
-            geoCollection.each(async function (e) {
-                let cadastr = e.properties.get('hintContent')
-                let colr = e.options.get('fillColor')
-                // eslint-disable-next-line no-undef
-                let area = ymaps.geo.polygonArea.calculatePolygonArea(e)
-                try {
-                    await PolygonService.put({
-                        uuid: e.properties.get('uuid'),
-                        marker: {
-                            type: 'Polygon',
-                            coordinates: e.geometry.getCoordinates()
-                        },
-                        color: colr,
-                        cadastrNumber: cadastr,
-                        area: area
-                    })
-                } catch (error) {
-                    this.error = error.response.data.error
-                }
-            })
-            alert('обновление выполнено')
         },
         polygonSelection (e) {
             this.controlDisable = false
