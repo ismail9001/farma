@@ -46,6 +46,15 @@
                            :disabled="controlDisable">
                         Удалить
                     </v-btn>
+                    <v-btn block
+                           class="mt-3"
+                           @click="updatePolygon"
+                           id="update">
+                        Обновить
+                    </v-btn>
+                    <div class="mt-3">
+                        <p>Общая площадь участков {{ allarea }} Га</p>
+                    </div>
                 </div>
             </v-col>
         </v-row>
@@ -70,7 +79,7 @@ export default {
         cadastrNumber: '',
         area: null,
         controlDisable: true,
-        allarea: null
+        allarea: 0
     }),
     components: {
         yandexMap
@@ -180,7 +189,9 @@ export default {
             }
         },
         add (newPolygon) {
-            this.allarea += newPolygon.area
+            if (newPolygon.area != null) {
+                this.allarea += Number(newPolygon.area)
+            }
             // eslint-disable-next-line no-undef
             let geoObject = new ymaps.Polygon(
                 newPolygon.marker.coordinates, {
@@ -204,10 +215,9 @@ export default {
             polygon.editor.stopDrawing()
             polygon.editor.stopEditing()
             polygon.options.set({ fillColor: this.fillColor })
-            polygon.properties.set({ hintContent: this.cadastrNumber })
             // eslint-disable-next-line no-undef
             let area = ymaps.geo.polygonArea.calculatePolygonArea(polygon)
-            polygon.properties.set({ area: area })
+            polygon.properties.set({ area: area, hintContent: this.cadastrNumber })
             try {
                 await PolygonService.put({
                     uuid: polygon.properties.get('uuid'),
@@ -235,6 +245,29 @@ export default {
             this.cadastrNumber = null
             this.controlDisable = true
         },
+        updatePolygon () {
+            geoCollection.each(async function (e) {
+                let cadastr = e.properties.get('hintContent')
+                let colr = e.options.get('fillColor')
+                // eslint-disable-next-line no-undef
+                let area = ymaps.geo.polygonArea.calculatePolygonArea(e)
+                try {
+                    await PolygonService.put({
+                        uuid: e.properties.get('uuid'),
+                        marker: {
+                            type: 'Polygon',
+                            coordinates: e.geometry.getCoordinates()
+                        },
+                        color: colr,
+                        cadastrNumber: cadastr,
+                        area: area
+                    })
+                } catch (error) {
+                    this.error = error.response.data.error
+                }
+            })
+            alert('обновление выполнено')
+        },
         polygonSelection (e) {
             this.controlDisable = false
             geoCollection.each(function (e) {
@@ -248,8 +281,7 @@ export default {
             polygon.editor.startEditing()
         }
         // TODO: динамическое изменение цвета полигонов
-        // TODO: сохранение площадей
-        // TODO: общая площадь
+        // TODO: обновление общей площади
         // TODO: переделать конфиги
     }
 }
