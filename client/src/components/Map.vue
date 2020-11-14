@@ -115,7 +115,7 @@ export default {
                         area += toRad(p2[1] - p1[1]) * (2 + Math.sin(toRad(p1[0])) + Math.sin(toRad(p2[0])))
                     }
 
-                    return Math.round(Math.abs(area * RADIUS * RADIUS / 2.0 / 10000) * 100) / 100
+                    return Math.abs(area * RADIUS * RADIUS / 2.0 / 10000).toFixed(2)
                 }
 
                 provide({ calculatePolygonArea })
@@ -181,11 +181,10 @@ export default {
             for (let i = 0; i < this.polygons.length; i++) {
                 this.add(this.polygons[i])
             }
+            this.allarea.toFixed(2)
         },
         add (newPolygon) {
-            if (newPolygon.area != null) {
-                this.allarea += Number(newPolygon.area)
-            }
+            this.allarea += Number(newPolygon.area)
             // eslint-disable-next-line no-undef
             let geoObject = new ymaps.Polygon(
                 newPolygon.marker.coordinates, {
@@ -260,11 +259,11 @@ export default {
 
 <style>
     .cont{
-        padding:0px;
+        padding:0;
     }
     html,body{
         height:100%;
-        margin:0px;
-        padding:0px;
+        margin:0;
+        padding:0;
     }
 </style>

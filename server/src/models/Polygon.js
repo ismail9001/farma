@@ -18,8 +18,8 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: true
 		},
 		area: {
-			type: DataTypes.INTEGER,
-			allowNull: true
+			type: DataTypes.DECIMAL,
+			allowNull: false
 		}
 	})
 	return Polygon

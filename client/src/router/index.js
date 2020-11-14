@@ -7,6 +7,7 @@ import Charts from '../components/Сharts.vue'
 import Table from '../components/Table.vue'
 import Feeds from '../components/Feeds.vue'
 import Map from '../components/Map.vue'
+import Heat from '../components/Heat.vue'
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ const routes = [
         path: '/',
         name: 'map',
         component: Map
+    },
+    {
+        path: '/heat',
+        name: 'heat',
+        component: Heat
     },
     {
         path: '/login',
